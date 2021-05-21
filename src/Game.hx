@@ -13,6 +13,14 @@ class Game
 
     public function new() {
         turnColor = 1;
+        field[redPositions.start] = 1;
+        field[yellowPositions.start] = 2;
+        field[bluePositions.start] = 3;
+        field[greenPositions.start] = 4;
+    }
+
+    public function print() {
+        Sys.println(field);
     }
 
     public function printField() {
@@ -45,6 +53,7 @@ class Game
                     if(field[eventualPos] == 4)
                         pawnsInHouse.green++;
                 }
+                field[position] = 0;
                 field[eventualPos] = turnColor;
             } else {
                 Sys.println("Position is occupied by your pawn");
@@ -54,5 +63,40 @@ class Game
         } else {
             Sys.println("This pawn does not belong to you");
         }
+    }
+
+    public function makeTheTurn() {
+        switch turnColor
+        {
+            case 1: Sys.print("Red");
+            case 2: Sys.print("Yellow");
+            case 3: Sys.print("Blue");
+            case 4: Sys.print("Green");
+        }
+        Sys.println(" turn.");
+        throwDie();
+        Sys.println('You threw ${diceNum}');
+        print();
+        Sys.print("Enter position of pawn to move: ");
+        var input = Sys.stdin().readLine();
+        var inputInt = Std.parseInt(input);
+        move(inputInt);
+        print();
+
+        if(turnColor == 4) {
+            turnColor = 1;
+        } else {
+            turnColor++;
+        }
+    }
+
+    public function run() {
+        Sys.println("Game Starts!");
+        var counter = 0;
+        while(counter < 6) {
+            makeTheTurn();
+            counter++;
+        }
+        Sys.println("Game ended");
     }
 }

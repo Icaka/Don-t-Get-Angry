@@ -19,6 +19,18 @@ class Game
         field[greenPositions.start] = 4;
     }
 
+    public function printWithPositions() {
+        for(i in 0...40) {
+            if(i > 9)
+                Sys.print(" ");
+            Sys.print('${field[i]}  ');
+        }
+        Sys.println(" ");
+        for(i in 0...40)
+            Sys.print('${i}  ');
+        Sys.println(" ");
+    }
+
     public function print() {
         Sys.println(field);
     }
@@ -39,8 +51,11 @@ class Game
         diceNum = Std.random(6) + 1;
     }
 
-    public function move(position:Int) {
+    public function move(position:Int):Bool {
         var eventualPos = position + diceNum;
+        if(eventualPos > 40) {
+            eventualPos = eventualPos - 40;
+        }
         if(field[position] == turnColor) { // check for pawn color or if the position is empty
             if(field[eventualPos] != turnColor) {
                 if(field[eventualPos] != 0) {
@@ -55,13 +70,17 @@ class Game
                 }
                 field[position] = 0;
                 field[eventualPos] = turnColor;
+                return true;
             } else {
                 Sys.println("Position is occupied by your pawn");
+                return false;
             }
         } else if (field[position] == 0){
            Sys.println("This position is empty");
+           return false;
         } else {
             Sys.println("This pawn does not belong to you");
+            return false;
         }
     }
 
@@ -76,11 +95,16 @@ class Game
         Sys.println(" turn.");
         throwDie();
         Sys.println('You threw ${diceNum}');
-        print();
-        Sys.print("Enter position of pawn to move: ");
-        var input = Sys.stdin().readLine();
-        var inputInt = Std.parseInt(input);
-        move(inputInt);
+        printWithPositions();
+        var input;
+        var inputInt;
+        do {
+            Sys.print("Enter position of pawn to move: ");
+            input = Sys.stdin().readLine();
+            inputInt = Std.parseInt(input);
+            if(move(inputInt))
+                break;
+        } while(true);
         print();
 
         if(turnColor == 4) {
@@ -93,7 +117,7 @@ class Game
     public function run() {
         Sys.println("Game Starts!");
         var counter = 0;
-        while(counter < 6) {
+        while(counter < 15) {
             makeTheTurn();
             counter++;
         }

@@ -48,7 +48,10 @@ class Game
     }
 
     public function throwDie() {
-        diceNum = Std.random(6) + 1;
+        //diceNum = Std.random(6) + 1;
+        var diceInput = Sys.stdin().readLine();
+        //diceNum = Sys.stdin().readLine();
+        diceNum = Std.parseInt(diceInput);
     }
 
     public function move(position:Int):Bool {
@@ -84,6 +87,78 @@ class Game
         }
     }
 
+    public function spawnNewPawn(color:Int):Bool {
+        switch color{
+            case 1: 
+                if(field[redPositions.start] != 1) {
+                    if(field[redPositions.start] != 0) {
+                        if(field[redPositions.start] == 2)
+                            pawnsInHouse.yellow++;
+                        if(field[redPositions.start] == 3)
+                            pawnsInHouse.blue++;
+                        if(field[redPositions.start] == 4)
+                            pawnsInHouse.green++;
+                    }
+                    field[redPositions.start] = 1;
+                    pawnsInHouse.red--;
+                    return true;
+                } else {
+                    //trace("error");
+                    return false;
+                }
+            case 2:
+                if(field[yellowPositions.start] != 2) {
+                    if(field[yellowPositions.start] != 0) {
+                        if(field[yellowPositions.start] == 1)
+                            pawnsInHouse.red++;
+                        if(field[yellowPositions.start] == 3)
+                            pawnsInHouse.blue++;
+                        if(field[yellowPositions.start] == 4)
+                            pawnsInHouse.green++;
+                    }
+                    field[yellowPositions.start] = 2;
+                    pawnsInHouse.yellow--;
+                    return true;
+                } else {
+                    return false;
+                }
+            case 3: 
+                if(field[bluePositions.start] != 3) {
+                    if(field[bluePositions.start] != 0) {
+                        if(field[bluePositions.start] == 1)
+                            pawnsInHouse.red++;
+                        if(field[bluePositions.start] == 2)
+                            pawnsInHouse.yellow++;
+                        if(field[bluePositions.start] == 4)
+                            pawnsInHouse.green++;
+                    }
+                    field[bluePositions.start] = 3;
+                    pawnsInHouse.blue--;
+                    return true;
+                } else {
+                    return false;
+                }
+                case 4: 
+                    if(field[greenPositions.start] != 4) {
+                        if(field[greenPositions.start] != 0) {
+                            if(field[greenPositions.start] == 1)
+                                pawnsInHouse.red++;
+                            if(field[greenPositions.start] == 2)
+                                pawnsInHouse.yellow++;
+                            if(field[greenPositions.start] == 3)
+                                pawnsInHouse.blue++;
+                        }
+                        field[greenPositions.start] = 4;
+                        pawnsInHouse.green--;
+                        return true;
+                    } else {
+                        return false;
+                    }
+                default: return false;    
+        }
+        return false;
+    }
+
     public function makeTheTurn() {
         switch turnColor
         {
@@ -94,7 +169,19 @@ class Game
         }
         Sys.println(" turn.");
         throwDie();
+        var diceSix:Bool = false; 
         Sys.println('You threw ${diceNum}');
+        if(diceNum == 6) {
+            diceSix = true;
+            if(spawnNewPawn(turnColor)) {
+                Sys.println("You get an extra pawn");
+                printWithPositions();
+                return;
+            }
+
+        }
+
+        //Sys.println('You threw ${diceNum}');
         printWithPositions();
         var input;
         var inputInt;
@@ -102,10 +189,19 @@ class Game
             Sys.print("Enter position of pawn to move: ");
             input = Sys.stdin().readLine();
             inputInt = Std.parseInt(input);
+
+            if(inputInt >= 40) {
+                Sys.println("Position out of bounds");
+                continue;
+            }
+
             if(move(inputInt))
                 break;
         } while(true);
         print();
+
+        if(diceSix)
+            return;
 
         if(turnColor == 4) {
             turnColor = 1;

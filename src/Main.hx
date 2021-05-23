@@ -6,6 +6,5 @@ class Main {
 		var game = new Game();
 		//game.printPawnsInHouse();
 		game.run();
-		
 	}
 }

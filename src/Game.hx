@@ -10,8 +10,10 @@ class Game
     private var greenPositions = {start: 30, end: 29};
     private var turnColor:Int; // 1: red; 2: yellow; 3: blue; 4: green
     private var diceNum:Int; // 1-6
+    private var gameOver:Bool;
 
     public function new() {
+        gameOver = false;
         turnColor = 1;
         field[redPositions.start] = 1;
         field[yellowPositions.start] = 2;
@@ -190,8 +192,9 @@ class Game
             input = Sys.stdin().readLine();
             inputInt = Std.parseInt(input);
 
-            if(inputInt >= 40) {
-                Sys.println("Position out of bounds");
+            if(!checkUserInput(inputInt)) {
+                if(gameOver)
+                    return;
                 continue;
             }
 
@@ -210,12 +213,33 @@ class Game
         }
     }
 
+    public function checkUserInput(input:Int):Bool {
+        if(input == null) {
+            Sys.println("Invalid input");
+            return false;
+        }
+        if(input >= 40 || input < 0) {
+            if(input == 42) {// a quick exit
+                gameOver = true;
+                return false;
+            }
+            Sys.println("Position out of bounds");
+            return false;
+        }
+        if(Std.isOfType(input, Float)) {
+            Sys.println("No floats");
+            return false;
+        }
+
+        return true;
+    }
+
     public function run() {
         Sys.println("Game Starts!");
         var counter = 0;
-        while(counter < 15) {
+        while(!gameOver) {
             makeTheTurn();
-            counter++;
+            //counter++;
         }
         Sys.println("Game ended");
     }

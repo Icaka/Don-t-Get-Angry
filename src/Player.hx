@@ -1,3 +1,4 @@
+import Field;
 class Player 
 {
     private var color:Int;
@@ -5,14 +6,15 @@ class Player
     private var startPosition:Int;
     private var endPosition:Int;
     private var savedPawns:Int;
-    //private var field;
+    private var field:Field;
 
-    public function new(col:Int, start:Int, end:Int) {
+    public function new(col:Int, start:Int, end:Int, f:Field) {
         color = col;
         pawnsInHouse = 3;
         startPosition = start;
         endPosition = end;
         savedPawns = 0;
+        field = f;
     }
 
     public function getColor():Int {
@@ -41,5 +43,9 @@ class Player
 
     public function spawnPawn() {
         
+    }
+
+    public function putPawnAtPosition(pos:Int) {
+        field.putPawnAt(pos, color);
     }
 }

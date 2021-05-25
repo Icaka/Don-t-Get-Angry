@@ -21,4 +21,16 @@ class Field
     public function putPawnAt(pos:Int, color:Int) {
         field[pos] = color;
     }
+
+    public function freePosition(pos:Int) {
+        field[pos] = 0;
+    }
+
+    public function placeStartingPawns() {
+        
+    }
+
+    public function getPawnAtPosition(pos:Int):Int {
+        return field[pos];
+    }
 }

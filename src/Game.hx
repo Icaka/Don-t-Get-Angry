@@ -1,7 +1,10 @@
+import haxe.Exception;
 import eval.luv.Random;
+import Player;
 
 class Game
 {
+    /*
     private var field = [for (i in 0...40) 0];
     private var pawnsInHouse = {red: 4, yellow: 4, blue: 4, green: 4};
     private var redPositions = {start: 0, end: 39};
@@ -9,16 +12,31 @@ class Game
     private var bluePositions = {start: 20, end: 19};
     private var greenPositions = {start: 30, end: 29};
     private var turnColor:Int; // 1: red; 2: yellow; 3: blue; 4: green
+    */
     private var diceNum:Int; // 1-6
     private var gameOver:Bool;
-
+    /*
     private var savedRedPawns:Int;
     private var savedYellowPawns:Int;
     private var savedBluePawns:Int;
     private var savedGreenPawns:Int;
+    */
+    private var field:Field;
+    private var red:Player;
+    private var yellow:Player;
+    private var blue:Player;
+    private var green:Player;
+    private var activePlayer:Player;
 
     public function new() {
         gameOver = false;
+        field = new Field();
+        red = new Player(1, 0, 39, field);
+        yellow = new Player(2, 10, 9, field);
+        blue = new Player(3, 20, 19, field);
+        green = new Player(4, 30, 29, field);
+        activePlayer = red;
+        /*
         turnColor = 1;
         field[redPositions.start] = 1;
         field[yellowPositions.start] = 2;
@@ -32,10 +50,12 @@ class Game
         savedYellowPawns = 0;
         savedBluePawns = 0;
         savedGreenPawns = 0;
+        */
     }
 
     public function printWithPositions() {
-        for(i in 0...40) {
+        field.print();
+        /*for(i in 0...40) {
             if(i > 9)
                 Sys.print(" ");
             Sys.print('${field[i]}  ');
@@ -44,31 +64,32 @@ class Game
         for(i in 0...40)
             Sys.print('${i}  ');
         Sys.println(" ");
+        */
     }
-
+    /*
     public function print() {
         Sys.println(field);
     }
-
+    
     public function printField() {
         for(i in field)
             Sys.println(i);
     }
-
+    
     public function printPawnsInHouse() {
         Sys.println('Red: ${pawnsInHouse.red}');
         Sys.println('Yellow: ${pawnsInHouse.yellow}');
         Sys.println('Blue: ${pawnsInHouse.blue}');
         Sys.println('Green: ${pawnsInHouse.green}');
     }
-
+    */
     public function throwDie() {
         //diceNum = Std.random(6) + 1;
         var diceInput = Sys.stdin().readLine();
         //diceNum = Sys.stdin().readLine();
         diceNum = Std.parseInt(diceInput);
     }
-
+    /*
     private function completeCourse(pos:Int) {
         
         switch field[pos] {
@@ -79,7 +100,7 @@ class Game
         }
         field[pos] = 0;
     }
-
+    
     private function checkForCompletionOfCourse(position:Int, eventualPos:Int):Bool {
         var startPos;
         var endPos;
@@ -95,7 +116,7 @@ class Game
             default: startPos = 0;
                     endPos = 0;
         }
-
+        
         
         if(position == endPos)
             return true;
@@ -107,12 +128,27 @@ class Game
 
         return false;
     }
-
+    */
     public function move(position:Int):Bool {
         var eventualPos = position + diceNum;
         if(eventualPos > 40) {
             eventualPos = eventualPos - 40;
         }
+        if(activePlayer.canMoveThere(position, eventualPos)) {
+            if(!field.isEmpty(eventualPos)) {
+                switch field.getPawnAtPosition(eventualPos) {
+                    case 1: red.removePawnFromField();
+                    case 2: yellow.removePawnFromField();
+                    case 3: blue.removePawnFromField();
+                    case 4: green.removePawnFromField();
+                }
+            }
+            activePlayer.move(position, eventualPos);
+            return true;
+        } else {
+            return false;
+        }
+        /*
         if(field[position] == turnColor) { // check for pawn color or if the position is empty
             if(checkForCompletionOfCourse(position, eventualPos)) {
                 completeCourse(position);
@@ -144,9 +180,27 @@ class Game
             Sys.println("This pawn does not belong to you");
             return false;
         }
+        */
+        trace("error");
+        return true;
     }
 
     public function spawnNewPawn(color:Int):Bool {
+        if(activePlayer.canSpawnPawn()) {
+            if(!field.isEmpty(activePlayer.getStartingPosition())) {
+                switch field.getPawnAtPosition(activePlayer.getStartingPosition()) {
+                    case 1: red.removePawnFromField();
+                    case 2: yellow.removePawnFromField();
+                    case 3: blue.removePawnFromField();
+                    case 4: green.removePawnFromField();
+                }
+            }
+            activePlayer.spawnPawn();
+            return true;
+        } else {
+            return false;
+        }
+        /*
         switch color{
             case 1: 
                 if(field[redPositions.start] != 1) {
@@ -219,25 +273,29 @@ class Game
                     }
                 default: return false;    
         }
+        */
         return false;
     }
 
     public function makeTheTurn() {
+        /*
         switch turnColor
         {
             case 1: Sys.print("Red");
             case 2: Sys.print("Yellow");
             case 3: Sys.print("Blue");
             case 4: Sys.print("Green");
-        }
+        }*/
+        activePlayer.printColor();
         Sys.println(" turn.");
         throwDie();
         var diceSix:Bool = false; 
         Sys.println('You threw ${diceNum}');
         if(diceNum == 6) {
             diceSix = true;
-            if(spawnNewPawn(turnColor)) {
+            if(activePlayer.canSpawnPawn()) {
                 Sys.println("You get an extra pawn");
+                activePlayer.spawnPawn();
                 printWithPositions();
                 return;
             }
@@ -258,19 +316,28 @@ class Game
                     return;
                 continue;
             }
-
+            
             if(move(inputInt))
                 break;
+
         } while(true);
-        print();
+        //print();
+        printWithPositions();
 
         if(diceSix)
             return;
-
+        /*
         if(turnColor == 4) {
             turnColor = 1;
         } else {
             turnColor++;
+        }
+        */
+        switch activePlayer.getColor() {
+            case 1: activePlayer = yellow;
+            case 2: activePlayer = blue;
+            case 3: activePlayer = green;
+            case 4: activePlayer = red;
         }
     }
 

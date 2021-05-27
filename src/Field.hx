@@ -33,4 +33,10 @@ class Field
     public function getPawnAtPosition(pos:Int):Int {
         return field[pos];
     }
+
+    public function isEmpty(pos:Int):Bool {
+        if(field[pos] == 0)
+            return true;
+        return false;
+    }
 }

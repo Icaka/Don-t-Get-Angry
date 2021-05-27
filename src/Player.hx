@@ -39,6 +39,16 @@ class Player
         return savedPawns;
     }
 
+    public function printColor() {
+        switch color
+        {
+            case 1: Sys.print("Red");
+            case 2: Sys.print("Yellow");
+            case 3: Sys.print("Blue");
+            case 4: Sys.print("Green");
+        }
+    }
+
     public function savePawn() {
         savedPawns++;
     }
@@ -70,16 +80,16 @@ class Player
     }
 
     public function canMoveThere(position:Int, eventualPosition:Int):Bool {
-        if(field.getPawnAtPosition(position) != color) {
-            Sys.println("This pawn does not belong to you");
-            return false;
-        }
         if(field.getPawnAtPosition(position) == 0) {
             Sys.println("This position is empty");
             return false;
         }
+        if(field.getPawnAtPosition(position) != color) {
+            Sys.println("This pawn does not belong to you");
+            return false;
+        }
         if(field.getPawnAtPosition(eventualPosition) == color) {
-            Sys.println("Position is occupied by your pawn");
+            Sys.println("Eventual position is occupied by your pawn");
             return false;
         }
 
@@ -109,5 +119,10 @@ class Player
     public function completeCourse(position:Int) {
         field.freePosition(position);
         savedPawns++;
+    }
+
+    public function removePawnfromPosition(pos:Int) {
+        field.freePosition(pos);
+        pawnsInHouse++;
     }
 }

@@ -137,4 +137,10 @@ class Player
         field.freePosition(pos);
         pawnsInHouse++;
     }
+
+    public function hasActivePawns():Bool { // returns false if there are no active pawns
+        if(4 - pawnsInHouse == savedPawns)
+            return false;
+        return true;
+    }
 }

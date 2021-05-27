@@ -126,38 +126,39 @@ class Game
             }
 
         }
-
-        //Sys.println('You threw ${diceNum}');
         printWithPositions();
-        var input;
-        var inputInt;
-        do {
-            Sys.print("Enter position of pawn to move: ");
-            input = Sys.stdin().readLine();
-            inputInt = Std.parseInt(input);
+        if(!activePlayer.hasActivePawns()) {
+            Sys.println("No pawns to move");
+        } else {
+            var input;
+            var inputInt;
+            do {
+                Sys.print("Enter position of pawn to move: ");
+                input = Sys.stdin().readLine();
+                inputInt = Std.parseInt(input);
 
-            if(!checkUserInput(inputInt)) {
-                if(gameOver)
-                    return;
-                continue;
-            }
+                if(!checkUserInput(inputInt)) {
+                    if(gameOver)
+                        return;
+                    continue;
+                }
+                
+                if(move(inputInt))
+                    break;
+
+            } while(true);
             
-            if(move(inputInt))
-                break;
+            printWithPositions();
+            if(checkWinningCondition()) {
+                activePlayer.printColor();
+                Sys.println(" won");
+                gameOver = true;
+                return;
+            }
 
-        } while(true);
-        //print();
-        printWithPositions();
-        if(checkWinningCondition()) {
-            activePlayer.printColor();
-            Sys.println(" won");
-            gameOver = true;
-            return;
+            if(diceSix)
+                return;
         }
-
-        if(diceSix)
-            return;
-        
         switch activePlayer.getColor() {
             case 1: activePlayer = yellow;
             case 2: activePlayer = blue;
@@ -185,12 +186,6 @@ class Game
             Sys.println("Position out of bounds");
             return false;
         }
-        /*
-        if(Std.isOfType(input, Float)) {
-            Sys.println("No floats");
-            return false;
-        }
-        */
         return true;
     }
 

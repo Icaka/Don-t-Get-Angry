@@ -25,11 +25,11 @@ class Field
     public function freePosition(pos:Int) {
         field[pos] = 0;
     }
-
+    /*
     public function placeStartingPawns() {
         
     }
-
+    */
     public function getPawnAtPosition(pos:Int):Int {
         return field[pos];
     }

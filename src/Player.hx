@@ -15,8 +15,12 @@ class Player
         startPosition = start;
         endPosition = end;
         savedPawns = 0;
+        //if(color == 2)
+        //    savedPawns = 3;
         field = f;
         field.putPawnAt(startPosition, color);
+        //if(color == 2)
+        //    field.putPawnAt(7, color);
     }
 
     public function getColor():Int {
@@ -79,7 +83,7 @@ class Player
         field.putPawnAt(pos, color);
     }
 
-    public function canMoveThere(position:Int, eventualPosition:Int):Bool {
+    public function canMoveThere(position:Int):Bool {
         if(field.getPawnAtPosition(position) == 0) {
             Sys.println("This position is empty");
             return false;
@@ -88,12 +92,20 @@ class Player
             Sys.println("This pawn does not belong to you");
             return false;
         }
-        if(field.getPawnAtPosition(eventualPosition) == color) {
+        return true;
+    }
+
+    public function checkEventualPosition(eventualPos:Int):Bool {
+        if(field.getPawnAtPosition(eventualPos) == color) {
             Sys.println("Eventual position is occupied by your pawn");
             return false;
         }
-
         return true;
+    }
+
+    public function checkIfMine(eventualPos:Int) {
+        
+        return false;
     }
 
     public function move(position:Int, eventualPos:Int) {

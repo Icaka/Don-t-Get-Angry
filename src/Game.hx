@@ -15,12 +15,7 @@ class Game
     */
     private var diceNum:Int; // 1-6
     private var gameOver:Bool;
-    /*
-    private var savedRedPawns:Int;
-    private var savedYellowPawns:Int;
-    private var savedBluePawns:Int;
-    private var savedGreenPawns:Int;
-    */
+
     private var field:Field;
     private var red:Player;
     private var yellow:Player;
@@ -36,35 +31,10 @@ class Game
         blue = new Player(3, 20, 19, field);
         green = new Player(4, 30, 29, field);
         activePlayer = red;
-        /*
-        turnColor = 1;
-        field[redPositions.start] = 1;
-        field[yellowPositions.start] = 2;
-        field[bluePositions.start] = 3;
-        field[greenPositions.start] = 4;
-        pawnsInHouse.red--;
-        pawnsInHouse.yellow--;
-        pawnsInHouse.blue--;
-        pawnsInHouse.green--;
-        savedRedPawns = 0;
-        savedYellowPawns = 0;
-        savedBluePawns = 0;
-        savedGreenPawns = 0;
-        */
     }
 
     public function printWithPositions() {
         field.print();
-        /*for(i in 0...40) {
-            if(i > 9)
-                Sys.print(" ");
-            Sys.print('${field[i]}  ');
-        }
-        Sys.println(" ");
-        for(i in 0...40)
-            Sys.print('${i}  ');
-        Sys.println(" ");
-        */
     }
     /*
     public function print() {
@@ -89,52 +59,20 @@ class Game
         //diceNum = Sys.stdin().readLine();
         diceNum = Std.parseInt(diceInput);
     }
-    /*
-    private function completeCourse(pos:Int) {
-        
-        switch field[pos] {
-            case 1: savedRedPawns++;
-            case 2: savedYellowPawns++;
-            case 3: savedBluePawns++;
-            case 4: savedGreenPawns++;
-        }
-        field[pos] = 0;
-    }
     
-    private function checkForCompletionOfCourse(position:Int, eventualPos:Int):Bool {
-        var startPos;
-        var endPos;
-        switch turnColor {
-            case 1: startPos = redPositions.start;
-                    endPos = redPositions.end;
-            case 2: startPos = yellowPositions.start;
-                    endPos = yellowPositions.end;
-            case 3: startPos = bluePositions.start;
-                    endPos = bluePositions.end;
-            case 4: startPos = greenPositions.start;
-                    endPos = greenPositions.end;
-            default: startPos = 0;
-                    endPos = 0;
-        }
-        
-        
-        if(position == endPos)
-            return true;
-        if(turnColor == 1) // red color is a special case
-            if(position + diceNum > 39)
-                return true;
-        if(position < endPos && eventualPos >= startPos && eventualPos > endPos)
-            return true;
-
-        return false;
-    }
-    */
     public function move(position:Int):Bool {
         var eventualPos = position + diceNum;
-        if(eventualPos > 40) {
+        if(eventualPos >= 40) {
             eventualPos = eventualPos - 40;
         }
-        if(activePlayer.canMoveThere(position, eventualPos)) {
+        if(activePlayer.canMoveThere(position)) {
+            if(activePlayer.checkForCourseCompletion(position, eventualPos)) {
+                activePlayer.completeCourse(position);
+                Sys.println("This pawn completed the lap");
+                return true;
+            }
+            if(!activePlayer.checkEventualPosition(eventualPos)) // checks if the eventual position is occupied by one of your pawns
+                return false;
             if(!field.isEmpty(eventualPos)) {
                 switch field.getPawnAtPosition(eventualPos) {
                     case 1: red.removePawnFromField();
@@ -148,39 +86,7 @@ class Game
         } else {
             return false;
         }
-        /*
-        if(field[position] == turnColor) { // check for pawn color or if the position is empty
-            if(checkForCompletionOfCourse(position, eventualPos)) {
-                completeCourse(position);
-                Sys.println("This pawn completed the lap");
-                return true;
-            }
-            if(field[eventualPos] != turnColor) {
-                if(field[eventualPos] != 0) {
-                    if(field[eventualPos] == 1)
-                        pawnsInHouse.red++;
-                    if(field[eventualPos] == 2)
-                        pawnsInHouse.yellow++;
-                    if(field[eventualPos] == 3)
-                        pawnsInHouse.blue++;
-                    if(field[eventualPos] == 4)
-                        pawnsInHouse.green++;
-                }
-                field[position] = 0;
-                field[eventualPos] = turnColor;
-                return true;
-            } else {
-                Sys.println("Position is occupied by your pawn");
-                return false;
-            }
-        } else if (field[position] == 0){
-           Sys.println("This position is empty");
-           return false;
-        } else {
-            Sys.println("This pawn does not belong to you");
-            return false;
-        }
-        */
+        
         trace("error");
         return true;
     }
@@ -200,92 +106,11 @@ class Game
         } else {
             return false;
         }
-        /*
-        switch color{
-            case 1: 
-                if(field[redPositions.start] != 1) {
-                    if(pawnsInHouse.red > 0) { // checks if there are pawns left in the house
-                        if(field[redPositions.start] != 0) {
-                            if(field[redPositions.start] == 2)
-                                pawnsInHouse.yellow++;
-                            if(field[redPositions.start] == 3)
-                                pawnsInHouse.blue++;
-                            if(field[redPositions.start] == 4)
-                                pawnsInHouse.green++;
-                        }
-                        field[redPositions.start] = 1;
-                        pawnsInHouse.red--;
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    //trace("error");
-                    return false;
-                }
-            case 2:
-                if(field[yellowPositions.start] != 2 && pawnsInHouse.yellow > 0) {
-                    if(field[yellowPositions.start] != 0) {
-                        if(field[yellowPositions.start] == 1)
-                            pawnsInHouse.red++;
-                        if(field[yellowPositions.start] == 3)
-                            pawnsInHouse.blue++;
-                        if(field[yellowPositions.start] == 4)
-                            pawnsInHouse.green++;
-                    }
-                    field[yellowPositions.start] = 2;
-                    pawnsInHouse.yellow--;
-                    return true;
-                } else {
-                    return false;
-                }
-            case 3: 
-                if(field[bluePositions.start] != 3 && pawnsInHouse.blue > 0) {
-                    if(field[bluePositions.start] != 0) {
-                        if(field[bluePositions.start] == 1)
-                            pawnsInHouse.red++;
-                        if(field[bluePositions.start] == 2)
-                            pawnsInHouse.yellow++;
-                        if(field[bluePositions.start] == 4)
-                            pawnsInHouse.green++;
-                    }
-                    field[bluePositions.start] = 3;
-                    pawnsInHouse.blue--;
-                    return true;
-                } else {
-                    return false;
-                }
-                case 4: 
-                    if(field[greenPositions.start] != 4 && pawnsInHouse.green > 0) {
-                        if(field[greenPositions.start] != 0) {
-                            if(field[greenPositions.start] == 1)
-                                pawnsInHouse.red++;
-                            if(field[greenPositions.start] == 2)
-                                pawnsInHouse.yellow++;
-                            if(field[greenPositions.start] == 3)
-                                pawnsInHouse.blue++;
-                        }
-                        field[greenPositions.start] = 4;
-                        pawnsInHouse.green--;
-                        return true;
-                    } else {
-                        return false;
-                    }
-                default: return false;    
-        }
-        */
+        
         return false;
     }
 
     public function makeTheTurn() {
-        /*
-        switch turnColor
-        {
-            case 1: Sys.print("Red");
-            case 2: Sys.print("Yellow");
-            case 3: Sys.print("Blue");
-            case 4: Sys.print("Green");
-        }*/
         activePlayer.printColor();
         Sys.println(" turn.");
         throwDie();
@@ -323,22 +148,28 @@ class Game
         } while(true);
         //print();
         printWithPositions();
+        if(checkWinningCondition()) {
+            activePlayer.printColor();
+            Sys.println(" won");
+            gameOver = true;
+            return;
+        }
 
         if(diceSix)
             return;
-        /*
-        if(turnColor == 4) {
-            turnColor = 1;
-        } else {
-            turnColor++;
-        }
-        */
+        
         switch activePlayer.getColor() {
             case 1: activePlayer = yellow;
             case 2: activePlayer = blue;
             case 3: activePlayer = green;
             case 4: activePlayer = red;
         }
+    }
+
+    public function checkWinningCondition():Bool {
+        if(activePlayer.getSavedPawns() >= 4)
+            return true;
+        return false;
     }
 
     public function checkUserInput(input:Int):Bool {

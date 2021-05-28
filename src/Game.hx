@@ -4,15 +4,6 @@ import Player;
 
 class Game
 {
-    /*
-    private var field = [for (i in 0...40) 0];
-    private var pawnsInHouse = {red: 4, yellow: 4, blue: 4, green: 4};
-    private var redPositions = {start: 0, end: 39};
-    private var yellowPositions = {start: 10, end: 9};
-    private var bluePositions = {start: 20, end: 19};
-    private var greenPositions = {start: 30, end: 29};
-    private var turnColor:Int; // 1: red; 2: yellow; 3: blue; 4: green
-    */
     private var diceNum:Int; // 1-6
     private var gameOver:Bool;
 
@@ -45,19 +36,18 @@ class Game
         for(i in field)
             Sys.println(i);
     }
-    
-    public function printPawnsInHouse() {
-        Sys.println('Red: ${pawnsInHouse.red}');
-        Sys.println('Yellow: ${pawnsInHouse.yellow}');
-        Sys.println('Blue: ${pawnsInHouse.blue}');
-        Sys.println('Green: ${pawnsInHouse.green}');
-    }
     */
+    public function printPawnsInHouse() {
+        Sys.println('Red: ${red.getPawnsInHouse()}');
+        Sys.println('Yellow: ${yellow.getPawnsInHouse()}');
+        Sys.println('Blue: ${blue.getPawnsInHouse()}');
+        Sys.println('Green: ${green.getPawnsInHouse()}');
+    }
+
     public function throwDie() {
-        //diceNum = Std.random(6) + 1;
-        var diceInput = Sys.stdin().readLine();
-        //diceNum = Sys.stdin().readLine();
-        diceNum = Std.parseInt(diceInput);
+        diceNum = Std.random(6) + 1;
+        //var diceInput = Sys.stdin().readLine();
+        //diceNum = Std.parseInt(diceInput);
     }
     
     public function move(position:Int):Bool {
@@ -65,7 +55,7 @@ class Game
         if(eventualPos >= 40) {
             eventualPos = eventualPos - 40;
         }
-        if(activePlayer.canMoveThere(position)) {
+        if(activePlayer.canMove(position)) {
             if(activePlayer.checkForCourseCompletion(position, eventualPos)) {
                 activePlayer.completeCourse(position);
                 Sys.println("This pawn completed the lap");
@@ -147,7 +137,7 @@ class Game
                     break;
 
             } while(true);
-            
+
             printWithPositions();
             if(checkWinningCondition()) {
                 activePlayer.printColor();
@@ -194,7 +184,6 @@ class Game
         var counter = 0;
         while(!gameOver) {
             makeTheTurn();
-            //counter++;
         }
         Sys.println("Game ended");
     }

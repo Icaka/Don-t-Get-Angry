@@ -83,7 +83,7 @@ class Player
         field.putPawnAt(pos, color);
     }
 
-    public function canMoveThere(position:Int):Bool {
+    public function canMove(position:Int):Bool {
         if(field.getPawnAtPosition(position) == 0) {
             Sys.println("This position is empty");
             return false;

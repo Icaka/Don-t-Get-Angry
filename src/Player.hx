@@ -9,16 +9,16 @@ class Player
     private var savedPawns:Int;
     private var field:Field;
 
-    public function new(col:Int, start:Int, end:Int, f:Field) {
+    public function new(col:Int, start:Int, f:Field) {
         color = col;
         pawnsInHouse = 3;
         startPosition = start;
-        endPosition = end;
         savedPawns = 0;
         //if(color == 2)
         //    savedPawns = 3;
         field = f;
         field.putPawnAt(startPosition, color);
+        endPosition = (startPosition - 1 + field.getSize()) % field.getSize();
         //if(color == 2)
         //    field.putPawnAt(7, color);
     }
@@ -103,11 +103,6 @@ class Player
         return true;
     }
 
-    public function checkIfMine(eventualPos:Int) {
-        
-        return false;
-    }
-
     public function move(position:Int, eventualPos:Int) {
         field.putPawnAt(eventualPos, color);
         field.freePosition(position);
@@ -118,7 +113,7 @@ class Player
         if(position == endPosition)
             return true;
         if(color == 1) {
-            if(position > 30 && eventualPos < 10)
+            if(eventualPos < position)
                 return true;
         } else {
             if(position < endPosition && eventualPos >= startPosition && eventualPos > endPosition)

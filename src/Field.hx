@@ -1,19 +1,20 @@
 class Field
 {
     public var field:Array<Int>;
-
-    public function new() {
-        field = [for (i in 0...40) 0];
+    public var size:Int;
+    public function new(newSize:Int) {
+        size = newSize;
+        field = [for (i in 0...size) 0];
     }
 
     public function print() {
-        for(i in 0...40) {
+        for(i in 0...size) {
             if(i > 9)
                 Sys.print(" ");
             Sys.print('${field[i]}  ');
         }
         Sys.println(" ");
-        for(i in 0...40)
+        for(i in 0...size)
             Sys.print('${i}  ');
         Sys.println(" ");
     }
@@ -38,5 +39,9 @@ class Field
         if(field[pos] == 0)
             return true;
         return false;
+    }
+
+    public function getSize():Int {
+        return size;
     }
 }
